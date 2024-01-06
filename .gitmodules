@@ -1,0 +1,3 @@
+[submodule "chloeww-bar-scripts"]
+	path = chloeww-bar-scripts
+	url = git@github.com:c-coward/chloeww-bar-scripts.git
