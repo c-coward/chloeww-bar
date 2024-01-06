@@ -1,0 +1,67 @@
+(defvar height 20)
+
+(deflisten window :initial "..." "./scripts/active-window-title.sh")
+(deflisten theme :initial "Adwaita" `./scripts/get-icon-theme.sh`)
+
+(deflisten workspacer1 :initial "" "./chloeww-bar-scripts/target/release/workspacer")
+(defpoll time :interval "10s" "date '+%H:%M %b %d, %Y'")
+
+(defwidget bar []
+  (centerbox :orientation "h"
+    (workspace-info)
+    (box)
+    (system-info)))
+
+(defwidget workspace-info []
+  (box
+    :class "workspace-info"
+    :space-evenly false
+    :spacing 20
+    (literal :content workspacer1)
+    (active-window)))
+
+(defwidget workspacer [count active]
+  (box))
+
+(defwidget active-window []
+  (box
+    :class "active-window-title"
+    :halign "start"
+    (label
+      :text window
+      :tooltip window
+      :limit-width 40)))
+
+(defwidget system-info []
+  (box
+    :class "system-info"
+    :orientation "h"
+    :space-evenly false
+    :spacing 10
+    :halign "end"
+    (battery)
+    (label :text `${EWW_TEMPS["ACPITZ_TEMP1"]}°C`)
+    time))
+
+(defwidget battery []
+  (box :orientation "h"
+       :class "battery"
+       :space-evenly false
+       :tooltip `Battery: ${EWW_BATTERY["BAT0"].capacity}%`
+    (image
+      :image-height height 
+      :path `/usr/share/icons/${theme}/symbolic/status/battery-level-${EWW_BATTERY["BAT0"].capacity - EWW_BATTERY["BAT0"].capacity % 10}${EWW_BATTERY["BAT0"].status == "Charging" ? "-charging" : ""}-symbolic.svg`)
+    ))
+
+(defwindow bar
+  :monitor 0
+  :windowtype "dock"
+  :stacking "fg"
+  :geometry (geometry :x "0"
+                      :y "0"
+                      :width "95%"
+                      ; :height 20 ;; Leaving this out, height will be determined through the variable and its effect on widgets
+                      :anchor "top center")
+  :exclusive true
+  (bar))
+
