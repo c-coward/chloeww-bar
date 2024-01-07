@@ -3,21 +3,22 @@
 (deflisten window :initial "..." "./scripts/active-window-title.sh")
 (deflisten theme :initial "Adwaita" `./scripts/get-icon-theme.sh`)
 
-(deflisten workspacer1 :initial "" "./chloeww-bar-scripts/target/release/workspacer")
+(deflisten workspacer0 :initial "" "./chloeww-bar-scripts/target/release/workspacer")
+(deflisten workspacer1 :initial "" "./chloeww-bar-scripts/target/release/workspacer -s 11")
 (defpoll time :interval "10s" "date '+%H:%M %b %d, %Y'")
 
-(defwidget bar []
+(defwidget bar [monitor]
   (centerbox :orientation "h"
-    (workspace-info)
+    (workspace-info :monitor {monitor})
     (box)
     (system-info)))
 
-(defwidget workspace-info []
+(defwidget workspace-info [monitor]
   (box
     :class "workspace-info"
     :space-evenly false
     :spacing 20
-    (literal :content workspacer1)
+    (literal :content {monitor == 0 ? workspacer0 : workspacer1})
     (active-window)))
 
 (defwidget workspacer [count active]
@@ -63,5 +64,17 @@
                       ; :height 20 ;; Leaving this out, height will be determined through the variable and its effect on widgets
                       :anchor "top center")
   :exclusive true
-  (bar))
+  (bar :monitor 0))
 
+(defwindow bar1
+  :monitor 1
+  :windowtype "dock"
+  :stacking "fg"
+  :geometry (geometry :x "0"
+                      :y "0"
+                      :width "95%"
+                      ; :height 20 ;; Leaving this out, height will be determined through the variable and its effect on widgets
+                      :anchor "top center")
+  :exclusive true
+  (bar :monitor 1))
+    
